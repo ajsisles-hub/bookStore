@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface BookRepository extends CrudRepository<Book, UUID> {
 
-    List<Book> findBooksByTitleAndDescription(String title, String description);
+    List<Book> findBooksByTitle(String title);
 
 }
