@@ -1,9 +1,8 @@
-package service;
+package com.project.bookStore.service;
 
 import com.project.bookStore.dto.BookDto;
 import com.project.bookStore.model.Book;
 import com.project.bookStore.repository.BookRepository;
-import com.project.bookStore.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,7 +42,7 @@ public class BookServiceTest {
 
 
         assertThat(1).isEqualTo(bookDtos.size());
-        assertThat(bookDtos.get(0))
+        assertThat(bookDtos.getFirst())
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("title", "book title")
                 .hasFieldOrPropertyWithValue("description", "book description")
