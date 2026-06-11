@@ -27,18 +27,8 @@ public class BookControllerTest {
 
     @Test
     // This guarantees cleanup.sql runs FIRST, then the insert script runs SECOND
-    @Sql(scripts = {"classpath:cleanup.sql", "classpath:InsertInitialBookRecordForTest.sql"},
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"classpath:cleanup.sql","classpath:InsertInitialBookRecordForTest.sql"})
     void shouldReturnBooksWhenBookApiCalled(){
-        BookDto[] listOfBooks = testRestTemplate.getForObject("http://localhost:" + port + "/api/v1/books", BookDto[].class);
-        assertThat(listOfBooks).isNotNull();
-        assertThat(listOfBooks.length).isEqualTo(1);
-    }
-
-    @Test
-    @Sql(scripts = {"classpath:InsertInitialBookRecordForTest.sql"},
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void shouldReturnBooksWhenBookApiCalled1(){
         BookDto[] listOfBooks = testRestTemplate.getForObject("http://localhost:" + port + "/api/v1/books", BookDto[].class);
         assertThat(listOfBooks).isNotNull();
         assertThat(listOfBooks.length).isEqualTo(1);
