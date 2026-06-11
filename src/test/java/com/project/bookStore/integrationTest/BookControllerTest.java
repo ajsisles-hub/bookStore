@@ -36,7 +36,7 @@ public class BookControllerTest {
     }
 
     @Test
-    @Sql(scripts = {"classpath:cleanup.sql", "classpath:InsertInitialBookRecordForTest.sql"},
+    @Sql(scripts = {"classpath:InsertInitialBookRecordForTest.sql"},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldReturnBooksWhenBookApiCalled1(){
         BookDto[] listOfBooks = testRestTemplate.getForObject("http://localhost:" + port + "/api/v1/books", BookDto[].class);
