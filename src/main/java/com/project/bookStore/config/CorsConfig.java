@@ -15,7 +15,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allows all endpoints in your app
-                        .allowedOrigins("http://localhost:3000", "https://bookstoreclient-production.up.railway.app") // Your React local address
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://bookstoreclient-production.up.railway.app"
+                        ) // Your React local address
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
