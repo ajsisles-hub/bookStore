@@ -16,6 +16,7 @@ import java.util.UUID;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,5 +48,16 @@ public class BookControllerTest {
                 .id(UUID.randomUUID())
                 .releaseYear(2000)
                 .build();
+    }
+
+    @Test
+    void shouldReturnBookDtoListWhenGetBooksTitleCalled(){
+        List<BookDto> bookDtos = new ArrayList<>();
+        bookDtos.add(getBookDto());
+        when(bookService.getBooksByTitle(anyString())).thenReturn(bookDtos);
+        ResponseEntity<List<BookDto>> books = bookController.getBooksByTitle("test title");
+        assertThat(books.getBody()).isNotNull();
+        assertThat(books.getBody()).size().isEqualTo(1);
+
     }
 }

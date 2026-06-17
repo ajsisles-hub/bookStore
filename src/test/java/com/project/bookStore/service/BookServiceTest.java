@@ -46,8 +46,8 @@ public class BookServiceTest {
         assertThat(1).isEqualTo(bookDtos.size());
         assertThat(bookDtos.getFirst())
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("title", "book title")
-                .hasFieldOrPropertyWithValue("description", "book description")
+                .hasFieldOrPropertyWithValue("title", "test title")
+                .hasFieldOrPropertyWithValue("description", "test description")
                 .hasFieldOrPropertyWithValue("releaseYear", 2026);
 
     }
@@ -62,7 +62,6 @@ public class BookServiceTest {
         when(mapper.map(book, BookDto.class)).thenReturn(bookDto);
 
         List<BookDto> bookDtoList = bookService.getBooksByTitle("test title");
-
         assertThat(bookDtoList.size()).isEqualTo(1);
     }
 
