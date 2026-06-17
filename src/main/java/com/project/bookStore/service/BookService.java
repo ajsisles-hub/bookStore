@@ -40,4 +40,17 @@ public class BookService {
                 .map(convertBookModelToBookDTO())
                 .collect(Collectors.toList());
     }
+
+    public BookDto saveBook(BookDto bookDto) {
+        bookRepository.save(modelMapper.map(bookDto, Book.class));
+    return modelMapper.map(bookDto, BookDto.class);
+
+    }
+
+    public List<BookDto> getBooksByTitle(String bookTitle) {
+        List<Book> booksByTitle = bookRepository.findBooksByTitleIgnoreCase(bookTitle);
+        return booksByTitle.stream()
+                .map(convertBookModelToBookDTO())
+                .collect(Collectors.toList());
+    }
 }
