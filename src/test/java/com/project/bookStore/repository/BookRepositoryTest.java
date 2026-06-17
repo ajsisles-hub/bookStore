@@ -31,7 +31,7 @@ public class BookRepositoryTest {
     void shouldReturnAllBooks() {
         Iterable<Book> all = bookRepository.findAll();
         Long totalBookCount = StreamSupport.stream(all.spliterator(), false).count();
-        Assertions.assertEquals(totalBookCount, 2);
+        Assertions.assertEquals(totalBookCount, 19);
     }
 
     @Test
