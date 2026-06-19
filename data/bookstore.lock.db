@@ -1,0 +1,6 @@
+#FileLock
+#Fri Jun 19 14:56:42 GMT+08:00 2026
+hostName=192.168.254.139
+id=19edeaae45dcb34db5ae16b705e51851eb23720bc21
+method=file
+server=192.168.254.139\:60488
