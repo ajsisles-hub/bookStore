@@ -1,15 +1,19 @@
 package com.project.bookStore.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +34,6 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-//    private final String SECRET_KEY = "FCJPmXSYPV4vT0yLZNxC9px0kuSWLMBRoYPoSDElcr2";// SHOULD BE AT SPRING PROFILES
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -46,6 +49,32 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 days
                 .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();
+
+    }
+
+    public Authentication validateToken(String token) {
+
+        try {
+            Claims claims = extractClaims(token);
+
+            if (claims.getExpiration().before(new Date())) {
+                return null;
+            }
+
+            String username = claims.getSubject();
+
+            return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
     }
 }
