@@ -10,6 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer {
+
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/api/v1/login",
+            "/api/v1/register",
+            "/api/v1/books",
+            "/actuator/**"
+    };
 
     private final UserDetailService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -36,12 +44,15 @@ public class SecurityConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable) // Modern Lambda style
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/login").permitAll()
+                        .requestMatchers(
+                                PUBLIC_ENDPOINTS
+                        ).permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -51,14 +62,21 @@ public class SecurityConfigurer {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        // For standard auth, use setUserDetailsService:
-        provider.setPasswordEncoder(passwordEncoder);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(); // Empty constructor!
+
+        provider.setUserDetailsService(userDetailsService); // Set the service here
+        provider.setPasswordEncoder(passwordEncoder);       // Set the encoder here
+
         return provider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/h2-console/**");
     }
 }
