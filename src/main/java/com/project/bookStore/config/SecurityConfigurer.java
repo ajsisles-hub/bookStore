@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurer {
 
     private static final String[] PUBLIC_ENDPOINTS = {
+            "/", //root config
             "/api/v1/login",
             "/api/v1/register",
             "/api/v1/books",
