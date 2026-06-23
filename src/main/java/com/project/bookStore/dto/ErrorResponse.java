@@ -1,4 +1,5 @@
 package com.project.bookStore.dto;
 
-public record ErrorResponse() {
-}
+import java.util.Map;
+
+public record ErrorResponse(String message, Map<String, Object> errors) {}

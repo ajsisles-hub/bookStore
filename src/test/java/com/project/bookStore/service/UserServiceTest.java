@@ -9,11 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -75,13 +77,42 @@ class UserServiceTest {
                 .build();
     }
 
-    private User getUser(UUID uuid) {
-        return User.builder()
-                .id(uuid)
+    private UserDto getUserDuplicateDTO() {
+        return UserDto.builder()
+                .id(UUID.randomUUID())
                 .name("user")
                 .email("user@gmail.com")
                 .password("password")
                 .build();
+    }
+
+    private User getUser(UUID uuid) {
+        return User.builder()
+                .id(uuid)
+                .name("mark")
+                .email("mark@gmail.com")
+                .password("password")
+                .build();
+    }
+
+    @Test
+    public void shouldThrowErrorEmailOrNameExists() {
+        UUID id = UUID.randomUUID();
+        UserDto duplicateDto = new UserDto(id, "mark", "mark@gmail.com", "password");
+        User mappedUser = User.builder().name("mark").email("mark@gmail.com").password("password").build();
+
+        // 2. Stub the mock behaviors
+        when(modelMapper.map(any(UserDto.class), any())).thenReturn(mappedUser);
+        when(passwordEncoder.encode(any())).thenReturn("encrypted_password");
+
+        // Simulate the database unique constraint throwing an exception on save
+        when(userRepository.saveAndFlush(any(User.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate entry 'mark@gmail.com' for key 'users.UK_email'"));
+
+        // 3. Act & Assert
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            userService.addUser(duplicateDto);
+        });
     }
 
 }
